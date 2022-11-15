@@ -1,0 +1,22 @@
+version: '3.7'
+services:
+  perforce-init:
+    image: local/helix-core:latest
+    command: /init-perforce.sh
+    volumes:
+      - ~/compose/scripts/init-perforce.sh:/init-perforce.sh
+      - ~/compose/volumes/perforce/etc:/etc/perforce
+      - ~/compose/volumes/perforce:/srv/perforce
+  perforce:
+    image: local/helix-local:latest
+    ports:
+      - 1666:1666
+    hostname: perforce.local
+    container_name: perforce
+    volumes:
+      - ~/compose/volumes/perforce/etc:/etc/perforce
+      - ~/compose/volumes/perforce:/srv/perforce
+    restart: always
+    depends_on:
+      perforce-init:
+        condition: service_completed_successfully
